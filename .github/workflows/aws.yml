@@ -35,7 +35,7 @@ env:
   ECR_REPOSITORY: cursor/taskmanagement           # set this to your Amazon ECR repository name
   ECS_SERVICE: cursor_taskmanagement                 # set this to your Amazon ECS service name
   ECS_CLUSTER: creative-giraffe-radb01                 # set this to your Amazon ECS cluster name
-  ECS_TASK_DEFINITION: arn:aws:ecs:us-east-2:979237820894:task-definition/cursor_taskamangement:1 # set this to the path to your Amazon ECS task definition
+  ECS_TASK_DEFINITION: https://us-east-2.console.aws.amazon.com/ecs/v2/task-definitions/cursor_taskamangement/1/json?region=us-east-2 # set this to the path to your Amazon ECS task definition
                                                # file, e.g. .aws/task-definition.json
   CONTAINER_NAME: cursor_taskmanagement           # set this to the name of the container in the
                                                # containerDefinitions section of your task definition
