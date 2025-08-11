@@ -1,0 +1,19 @@
+{
+  "name": "dep-board",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently -k -n web,api \"npm run dev -w apps/web\" \"npm run dev -w apps/api\"",
+    "build": "npm run build -w apps/web && npm run build -w apps/api",
+    "lint": "npm run lint -w apps/web || true && npm run lint -w apps/api || true",
+    "typecheck": "npm run typecheck -w apps/web || true && npm run typecheck -w apps/api || true",
+    "prisma": "npm run prisma -w apps/api"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.1"
+  }
+}

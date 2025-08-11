@@ -1,0 +1,113 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String           @id @default(cuid())
+  email        String           @unique
+  name         String?
+  role         String           @default("VIEWER")
+  boards       Board[]          @relation("BoardOwner")
+  memberships  BoardMember[]
+  assigned     TaskAssignment[]
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+}
+
+model Board {
+  id          String         @id @default(cuid())
+  name        String
+  description String?
+  owner       User?          @relation("BoardOwner", fields: [ownerId], references: [id])
+  ownerId     String?
+  members     BoardMember[]
+  tasks       Task[]
+  formulas    Formula[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+model BoardMember {
+  id        String @id @default(cuid())
+  board     Board  @relation(fields: [boardId], references: [id])
+  boardId   String
+  user      User   @relation(fields: [userId], references: [id])
+  userId    String
+  role      String @default("EDITOR")
+
+  @@unique([boardId, userId])
+}
+
+model Task {
+  id           String     @id @default(cuid())
+  board        Board      @relation(fields: [boardId], references: [id])
+  boardId      String
+  parent       Task?      @relation("TaskToSubtasks", fields: [parentId], references: [id])
+  parentId     String?
+  subtasks     Task[]     @relation("TaskToSubtasks")
+  title        String
+  description  String?
+  status       String     @default("TODO")
+  priority     String     @default("MEDIUM")
+  dueDate      DateTime?
+  dependencies TaskDependency[] @relation("TaskDependencies")
+  dependents   TaskDependency[] @relation("TaskDependents")
+  assignments  TaskAssignment[]
+  tags         TaskTag[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+model TaskDependency {
+  id               String  @id @default(cuid())
+  task             Task    @relation("TaskDependents", fields: [taskId], references: [id])
+  taskId           String
+  dependsOn        Task    @relation("TaskDependencies", fields: [dependsOnTaskId], references: [id])
+  dependsOnTaskId  String
+  type             String  @default("RELIES_ON")
+
+  @@unique([taskId, dependsOnTaskId])
+}
+
+model TaskAssignment {
+  id      String @id @default(cuid())
+  task    Task   @relation(fields: [taskId], references: [id])
+  taskId  String
+  user    User   @relation(fields: [userId], references: [id])
+  userId  String
+
+  @@unique([taskId, userId])
+}
+
+model Tag {
+  id    String @id @default(cuid())
+  name  String @unique
+  color String?
+  tasks TaskTag[]
+}
+
+model TaskTag {
+  id     String @id @default(cuid())
+  task   Task   @relation(fields: [taskId], references: [id])
+  taskId String
+  tag    Tag    @relation(fields: [tagId], references: [id])
+  tagId  String
+
+  @@unique([taskId, tagId])
+}
+
+model Formula {
+  id           String   @id @default(cuid())
+  board        Board    @relation(fields: [boardId], references: [id])
+  boardId      String
+  name         String
+  expression   String
+  resultType   String   @default("NUMBER")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
