@@ -25,8 +25,8 @@ async function start() {
 
   app.get('/health', (_req, res) => res.json({ ok: true }));
 
-  app.listen(PORT, () => {
-    console.log(`API listening on http://localhost:${PORT}`);
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`API listening on http://0.0.0.0:${PORT}`);
   });
 }
 
